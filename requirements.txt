@@ -1,0 +1,19 @@
+# torch and torchvision are NOT listed here on purpose.
+# They must be installed separately first, matching your GPU's CUDA
+# version (see README.md). For an RTX 5060 (Blackwell, sm_120):
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+# If they were listed below, running `pip install -r requirements.txt`
+# could silently reinstall a CPU-only or wrong-CUDA build and break GPU support.
+
+datasets>=2.14.0
+segmentation-models-pytorch>=0.3.3
+albumentations>=1.3.1
+opencv-python-headless>=4.8.0
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+matplotlib>=3.7.0
+Pillow>=10.0.0
+tqdm>=4.65.0
+PyYAML>=6.0
+tensorboard>=2.14.0

@@ -1,0 +1,23 @@
+# Data (downloaded/generated, not source)
+data/
+
+# Model weights
+outputs/checkpoints/
+*.pth
+
+# Generated plots/results (keep the ones referenced in report.md manually if desired)
+outputs/inference/*
+!outputs\inference\image3_comparison.png
+!outputs\inference\image4_comparison.png
+!outputs\inference\images2_comparison.png
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+.env
+venv/
+*.egg-info/
+
+.DS_Store
+.vscode/
