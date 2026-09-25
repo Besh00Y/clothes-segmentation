@@ -493,19 +493,19 @@ I also tested the trained model on images outside the ATR dataset using the infe
 
 **Example 1 — clean segmentation:**
 
-![[Fitting Room] - external test](outputs\inference\images2_comparison.png)
+![[Fitting Room] - external test](outputs/inference/images2_comparison.png)
 
 This image contained one person standing on Fitting Room, and the model produced relatively clean clothing regions for him.
 
 **Example 2 — clean segmentation:**
 
-![Golf players - external test](outputs\inference\image3_comparison.png)
+![Golf players - external test](outputs/inference/image3_comparison.png)
 
 This image contained two people standing outdoors, and the model produced relatively clean clothing regions for both people.
 
 **Example 3 — missed pants:**
 
-![Walking men - external test](outputs\inference\image4_comparison.png)
+![Walking men - external test](outputs/inference/image4_comparison.png)
 
 This image contained two people walking away from the camera. The model detected their jackets reasonably well but missed much of their pants.
 
