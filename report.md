@@ -7,6 +7,7 @@ The goal of this project was to build a computer vision model that can take an i
 I treated the problem as **binary semantic segmentation**:
 
 * `1` → Clothes
+
 * `0` → Not Clothes
 
 I chose this setup because the main requirement of the project is to separate clothing from the person and the surrounding scene, rather than identifying each type of garment separately. This also keeps the problem focused on getting accurate clothing boundaries.
@@ -28,14 +29,23 @@ I considered other datasets, including iMaterialist, but ATR was a better fit fo
 ATR provides separate labels for these regions. For example, it contains classes such as:
 
 * Upper clothes
+
 * Pants
+
 * Skirt
+
 * Dress
+
 * Shoes
+
 * Hair
+
 * Face
+
 * Arms
+
 * Legs
+
 * Background
 
 This made it possible to convert the original human-parsing masks into a binary clothes/not-clothes mask without having to create new annotations.
@@ -51,25 +61,41 @@ The original ATR masks contain multiple classes, but I only needed two classes f
 I mapped the following classes to **Clothes (1)**:
 
 * Hat
+
 * Upper clothes
+
 * Skirt
+
 * Pants
+
 * Dress
+
 * Belt
+
 * Left shoe
+
 * Right shoe
+
 * Bag
+
 * Scarf
 
 The following classes were mapped to **Not Clothes (0)**:
 
 * Background
+
 * Hair
+
 * Sunglasses
+
 * Face
+
 * Left leg
+
 * Right leg
+
 * Left arm
+
 * Right arm
 
 The decision to include bags and scarves as clothes is a project-specific choice. Bags are technically accessories rather than garments, so a different application could choose to exclude them. In my implementation, they were included because they are worn or carried items that are visually associated with the clothing region.
@@ -81,7 +107,9 @@ The decision to include bags and scarves as clothes is a project-specific choice
 I split the dataset into:
 
 * **70% training**
+
 * **15% validation**
+
 * **15% test**
 
 A fixed random seed of `42` was used so that the split could be reproduced.
@@ -110,6 +138,7 @@ I also normalized the images using the standard ImageNet mean and standard devia
 
 ```text
 Mean = (0.485, 0.456, 0.406)
+
 Std  = (0.229, 0.224, 0.225)
 ```
 
@@ -118,6 +147,7 @@ This was done because the ResNet34 encoder uses ImageNet-pretrained weights.
 For data augmentation, I used:
 
 * Horizontal flipping
+
 * Random brightness and contrast changes
 
 I kept the augmentation relatively simple because the main goal was to improve robustness without introducing unrealistic transformations.
@@ -149,8 +179,11 @@ I implemented the decoder myself.
 Each decoder block:
 
 1. Upsamples the feature map.
+
 2. Concatenates it with the corresponding encoder feature map.
+
 3. Applies two `3 × 3` convolution layers.
+
 4. Uses Batch Normalization and ReLU activation.
 
 The encoder and decoder are connected using **skip connections**, which is one of the main ideas behind U-Net.
@@ -218,18 +251,18 @@ The main training settings were:
 
 I also used `ReduceLROnPlateau` to reduce the learning rate when validation performance stopped improving.
 
-The learning rate was reduced three times during training as validation performance plateaued.
+The learning rate was reduced during training when validation performance plateaued, allowing the model to continue improving after the initial learning rate stopped being effective.
 
 At the end of training:
 
 | Metric |  Train | Validation |
 | ------ | -----: | ---------: |
-| Dice   | 0.9634 |     0.9478 |
-| IoU    | 0.9294 |     0.9008 |
+| Dice   | 0.9621 |     0.9460 |
+| IoU    | 0.9269 |     0.8975 |
 
-The difference between training and validation performance remained relatively small, which suggests that there was no severe overfitting during the 20 epochs.
+The difference between training and validation performance remained relatively small, which suggests that severe overfitting was not observed during the 20 epochs.
 
-The best checkpoint was saved as:
+The best validation performance was obtained at **Epoch 18**, with a validation Dice of `0.9465` and validation IoU of `0.8984`. The corresponding checkpoint was saved as:
 
 ```text
 outputs/checkpoints/best_model.pth
@@ -340,7 +373,9 @@ The visualization compares:
 
 ```text
 Original Image
+
 Ground Truth
+
 Prediction
 ```
 
@@ -436,6 +471,7 @@ The final precision and recall were:
 
 ```text
 Precision = 0.9419
+
 Recall    = 0.9497
 ```
 
@@ -493,9 +529,9 @@ I also tested the trained model on images outside the ATR dataset using the infe
 
 **Example 1 — clean segmentation:**
 
-![[Fitting Room] - external test](outputs/inference/images2_comparison.png)
+![\[Fitting Room\] - external test](outputs/inference/images2_comparison.png)
 
-This image contained one person standing on Fitting Room, and the model produced relatively clean clothing regions for him.
+This image contained one person in a fitting-room environment, and the model produced relatively clean clothing regions for him.
 
 **Example 2 — clean segmentation:**
 
@@ -509,7 +545,7 @@ This image contained two people standing outdoors, and the model produced relati
 
 This image contained two people walking away from the camera. The model detected their jackets reasonably well but missed much of their pants.
 
-The second example contained two challenging conditions: the people were relatively small in the image, and the pants had a similar gray tone to the path around them.
+This example contained two challenging conditions: the people were relatively small in the image, and the pants had a similar gray tone to the path around them.
 
 These observations are consistent with some of the failure patterns seen in the test-set error analysis. However, this was only a small qualitative external test, so a larger external dataset would be needed to make stronger claims about real-world generalization.
 
@@ -538,10 +574,15 @@ Therefore, in an image containing several overlapping people, the clothing pixel
 The model is also more likely to struggle with:
 
 * Very small or distant people
+
 * Heavy occlusion
+
 * Low-contrast clothing
+
 * Unusual poses
+
 * Small disconnected clothing regions
+
 * Objects touching or overlapping the clothing
 
 These are important areas for future improvement.
@@ -585,8 +626,11 @@ The project successfully implemented an end-to-end binary clothes segmentation p
 The final U-Net with a ResNet34 encoder achieved:
 
 * **IoU: 0.8974**
+
 * **Dice: 0.9443**
+
 * **Precision: 0.9419**
+
 * **Recall: 0.9497**
 
 on the held-out test set.
